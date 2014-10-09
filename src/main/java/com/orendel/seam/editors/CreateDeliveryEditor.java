@@ -54,7 +54,7 @@ public class CreateDeliveryEditor extends Composite {
 	private Button btnGuardar;
 	private Button btnLimpiar;
 	
-	private Listener listenerF11;
+	private Listener listenerF09;
 	private Listener listenerF12;
 	
 
@@ -215,7 +215,7 @@ public class CreateDeliveryEditor extends Composite {
 		btnLimpiar = new Button(compositeActions, SWT.NONE);
 		btnLimpiar.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
 		btnLimpiar.setBounds(0, 0, 75, 25);
-		btnLimpiar.setText("Limpiar (F11)");
+		btnLimpiar.setText("Limpiar (F9)");
 		btnLimpiar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -263,18 +263,18 @@ public class CreateDeliveryEditor extends Composite {
 			}
 		};
 		
-		listenerF11 = new Listener() {
+		listenerF09 = new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				if (event.keyCode == SWT.F11) {
-					System.out.println("F11 (reset delivery form) pressed!");
+				if (event.keyCode == SWT.F9) {
+					System.out.println("F9 (reset delivery form) pressed!");
 					resetDeliveryData();
 				}
 			}
 		};
 		
 		display.addFilter(SWT.KeyDown, listenerF12);		
-		display.addFilter(SWT.KeyDown, listenerF11);
+		display.addFilter(SWT.KeyDown, listenerF09);
 	}
 	
 	private void createDelivery() {
@@ -453,7 +453,7 @@ public class CreateDeliveryEditor extends Composite {
 
 	@Override
 	public void dispose() {
-		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF11);
+		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF09);
 		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF12);
 		controller.finalizarSesion();
 		deliveriesController.finalizarSesion();
