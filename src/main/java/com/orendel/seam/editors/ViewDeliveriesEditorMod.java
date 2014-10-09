@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,7 +30,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import com.orendel.seam.controllers.DeliveriesController;
-import com.orendel.seam.controllers.InvoicesController;
 import com.orendel.seam.dialogs.DeliveryDetailDialog;
 import com.orendel.seam.domain.delivery.Delivery;
 import com.orendel.seam.services.DateUtil;
@@ -39,7 +40,6 @@ public class ViewDeliveriesEditorMod extends Composite {
 	private Logger logger = Logger.getLogger(ViewDeliveriesEditorMod.class);
 	
 	private DeliveriesController controller;
-	private InvoicesController c2;
 	private final String[] searchModeItems = new String[] {"Número de factura", "Número de entrega", "Rango de fecha"}; 
 	
 	private Table table;
@@ -64,10 +64,8 @@ public class ViewDeliveriesEditorMod extends Composite {
 
 		shell = parent.getShell();
 		controller = new DeliveriesController();
-		c2 = new InvoicesController();
 		logger.info("BBBB: " + controller.getListado().size());
 		logger.info("BBBB: " + controller.findAllDeliveries().size());
-		logger.info("BBBB: " + c2.getListado().size());
 		
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
@@ -136,6 +134,9 @@ public class ViewDeliveriesEditorMod extends Composite {
 	
 	
 	private void executeSearchByInvoiceNumber(String invoiceNumber) {
+		if (invoiceNumber.isEmpty()) {
+			return;
+		}
 		List<Delivery> deliveryList = controller.findDeliveriesByInvoiceNumber(invoiceNumber);
 		if (deliveryList != null && !deliveryList.isEmpty()) {
 			refreshTableDetails(deliveryList);
@@ -148,6 +149,9 @@ public class ViewDeliveriesEditorMod extends Composite {
 	
 	
 	private void executeSearchByDeliveryNumber(String deliveryNumber) {
+		if (deliveryNumber.isEmpty()) {
+			return;
+		}
 		List<Delivery> deliveryList = new ArrayList<Delivery>();
 		Delivery delivery = controller.findDeliveryByDeliveryNumber(deliveryNumber);
 		if (delivery != null) {
@@ -245,6 +249,14 @@ public class ViewDeliveriesEditorMod extends Composite {
 		gd_txtFactura.widthHint = 146;
 		txtFactura.setLayoutData(gd_txtFactura);
 		txtFactura.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		txtFactura.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == 13) {
+					executeSearchByInvoiceNumber(txtFactura.getText());
+				}
+			}			
+		});
 		
 		Button btnBuscar = new Button(composite, SWT.NONE);
 		GridData gd_btnBuscar = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -274,6 +286,14 @@ public class ViewDeliveriesEditorMod extends Composite {
 		gd_txtEntrega.widthHint = 146;
 		txtEntrega.setLayoutData(gd_txtEntrega);
 		txtEntrega.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		txtEntrega.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == 13) {
+					executeSearchByDeliveryNumber(txtEntrega.getText());
+				}
+			}			
+		});
 		
 		Button btnBuscar = new Button(composite, SWT.NONE);
 		GridData gd_btnBuscar = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -284,7 +304,7 @@ public class ViewDeliveriesEditorMod extends Composite {
 		btnBuscar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				executeSearchByDeliveryNumber(txtEntrega.getText());;
+				executeSearchByDeliveryNumber(txtEntrega.getText());
 			}
 		});
 	}
