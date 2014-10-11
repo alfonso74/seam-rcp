@@ -37,7 +37,7 @@ import com.orendel.seam.util.MessagesUtil;
 
 
 public class CreateDeliveryEditor extends Composite {
-	private final Logger logger = Logger.getLogger(CreateDeliveryEditor.class);
+	private static final Logger logger = Logger.getLogger(CreateDeliveryEditor.class);
 	
 	private InvoicesController controller;
 	private DeliveriesController deliveriesController;

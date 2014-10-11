@@ -37,7 +37,7 @@ import com.orendel.seam.util.MessagesUtil;
 
 
 public class ViewDeliveriesEditorMod extends Composite {
-	private Logger logger = Logger.getLogger(ViewDeliveriesEditorMod.class);
+	private static final Logger logger = Logger.getLogger(ViewDeliveriesEditorMod.class);
 	
 	private DeliveriesController controller;
 	private final String[] searchModeItems = new String[] {"Número de factura", "Número de entrega", "Rango de fecha"}; 
