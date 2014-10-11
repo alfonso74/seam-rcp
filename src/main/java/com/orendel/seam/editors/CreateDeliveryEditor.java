@@ -66,8 +66,8 @@ public class CreateDeliveryEditor extends Composite {
 	public CreateDeliveryEditor(Composite parent, int style) {
 		super(parent, style);
 		
-		controller = new InvoicesController("InvCtrl");
-		deliveriesController = new DeliveriesController("DelivCtrl");
+		controller = new InvoicesController("InvoicesCtrl");
+		deliveriesController = new DeliveriesController("DeliveryCtrl");
 //		blue = parent.getDisplay().getSystemColor(SWT.COLOR_BLUE);
 		
 		GridLayout gridLayout = new GridLayout(1, false);
@@ -430,8 +430,8 @@ public class CreateDeliveryEditor extends Composite {
 	private void resetDeliveryData() {
 		controller.finalizarSesion();
 		deliveriesController.finalizarSesion();
-		controller = new InvoicesController("PUF");
-		deliveriesController = new DeliveriesController("PUF2");
+		controller = new InvoicesController("InvoicesCtrl");
+		deliveriesController = new DeliveriesController("DeliveryCtrl");
 		tableInvoiceLines.clearAll();
 		invoice = null;
 		btnGuardar.setEnabled(false);
