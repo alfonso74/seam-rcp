@@ -66,8 +66,8 @@ public class CreateDeliveryEditor extends Composite {
 	public CreateDeliveryEditor(Composite parent, int style) {
 		super(parent, style);
 		
-		controller = new InvoicesController("PUF");
-		deliveriesController = new DeliveriesController("PUF2");
+		controller = new InvoicesController("InvCtrl");
+		deliveriesController = new DeliveriesController("DelivCtrl");
 //		blue = parent.getDisplay().getSystemColor(SWT.COLOR_BLUE);
 		
 		GridLayout gridLayout = new GridLayout(1, false);
