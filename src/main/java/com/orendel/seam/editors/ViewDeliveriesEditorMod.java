@@ -270,6 +270,8 @@ public class ViewDeliveriesEditorMod extends Composite {
 				executeSearchByInvoiceNumber(txtFactura.getText());
 			}
 		});
+		
+		txtFactura.setFocus();
 	}
 	
 	
@@ -307,6 +309,8 @@ public class ViewDeliveriesEditorMod extends Composite {
 				executeSearchByDeliveryNumber(txtEntrega.getText());
 			}
 		});
+		
+		txtEntrega.setFocus();
 	}
 	
 	
@@ -354,6 +358,8 @@ public class ViewDeliveriesEditorMod extends Composite {
 				executeSearchByDateRange(ini.getTime(), end.getTime());
 			}
 		});
+		
+		btnBuscar.setFocus();
 	}
 	
 	

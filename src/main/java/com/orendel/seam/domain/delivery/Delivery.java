@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import com.orendel.seam.domain.Status;
+
 
 @Entity
 @Table(name = "AM_DELIVERY")
@@ -38,6 +40,13 @@ public class Delivery {
 	/** Delivery created date */
 	@Column(name = "CREATED")
 	private Date created;
+	
+	/** Delivery closed date */
+	@Column(name = "CLOSED")
+	private Date closed;
+	
+	@Column(name = "STATUS")
+	private String status;
 	
 	@Column(name = "USERNAME")
 	private String userName;
@@ -67,6 +76,11 @@ public class Delivery {
 		return total;
 	}
 	
+	
+	public void close() {
+		this.setClosed(new Date());
+		this.setStatus(Status.CLOSED.getCode());
+	}
 	
 	
 	// ***************************** Getters and setters ********************************
@@ -108,6 +122,26 @@ public class Delivery {
 
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	
+	public Date getClosed() {
+		return closed;
+	}
+
+
+	public void setClosed(Date closed) {
+		this.closed = closed;
+	}
+	
+
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 

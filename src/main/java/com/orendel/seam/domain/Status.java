@@ -1,9 +1,15 @@
 package com.orendel.seam.domain;
 
 public enum Status {
-	
+	/** Active delivery/user */
 	ACTIVE("A", "Activo"),
-	INACTIVE("I", "Inactivo");
+	/** Closed delivery */
+	CLOSED("C", "Cerrado"),
+	/** Inactive user */
+	INACTIVE("I", "Inactivo"),
+	/** Partial/Pending delivery */
+	PENDING("P", "Pending"),
+	;
 
 	private String code;
 	private String description;

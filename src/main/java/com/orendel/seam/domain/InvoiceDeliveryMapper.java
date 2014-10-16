@@ -7,7 +7,10 @@ import com.orendel.seam.domain.counterpoint.InvoiceLine;
 import com.orendel.seam.domain.delivery.Delivery;
 import com.orendel.seam.domain.delivery.DeliveryLine;
 
-
+/**
+ * Used to create {@link Delivery} and {@link DeliveryLine} objects from invoices/invoices lines. 
+ * @author Admin
+ */
 public final class InvoiceDeliveryMapper {
 
 	
@@ -16,6 +19,7 @@ public final class InvoiceDeliveryMapper {
 		delivery.setInvoiceId(invoice.getId());
 		delivery.setTicketNumber(invoice.getTicket());
 		delivery.setCreated(new Date());
+		delivery.setStatus(Status.PENDING.getCode());
 		for (InvoiceLine invoiceLine : invoice.getLines()) {
 			DeliveryLine line = from(invoiceLine);
 			delivery.addDeliveryLine(line);

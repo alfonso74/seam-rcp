@@ -51,9 +51,11 @@ public class CreateDeliveryEditor extends Composite {
 	private Text txtBarcode;
 	private Text txtQty;
 	
+	private Button btnParcial;
 	private Button btnGuardar;
 	private Button btnLimpiar;
 	
+	private Listener listenerF04;
 	private Listener listenerF09;
 	private Listener listenerF12;
 	
@@ -208,13 +210,23 @@ public class CreateDeliveryEditor extends Composite {
 		tblclmnDescripcin.setText("Descripción");
 		
 		Composite compositeActions = new Composite(this, SWT.NONE);
-		GridLayout gl_compositeActions = new GridLayout(2, false);
+		GridLayout gl_compositeActions = new GridLayout(3, false);
 		gl_compositeActions.marginWidth = 0;
 		compositeActions.setLayout(gl_compositeActions);
 		
+		btnParcial = new Button(compositeActions, SWT.NONE);
+		btnParcial.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
+		btnParcial.setText("Entrega parcial (F4)");
+		btnParcial.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println("Partial delivery button pressed!");
+				createPartialDelivery();;
+			}
+		});
+		
 		btnLimpiar = new Button(compositeActions, SWT.NONE);
 		btnLimpiar.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
-		btnLimpiar.setBounds(0, 0, 75, 25);
 		btnLimpiar.setText("Limpiar (F9)");
 		btnLimpiar.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -231,11 +243,14 @@ public class CreateDeliveryEditor extends Composite {
 		btnGuardar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				System.out.println("Save delivery button pressed!");
 				createDelivery();
 			}
 		});
 		
 		addGlobalListeners();
+		
+		txtInvoiceNo.setFocus();
 	}
 	
 	
@@ -273,12 +288,31 @@ public class CreateDeliveryEditor extends Composite {
 			}
 		};
 		
+		listenerF04 = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.keyCode == SWT.F4) {
+					System.out.println("F4 (partial delivery form) pressed!");
+					resetDeliveryData();
+				}
+			}
+		};
+		
 		display.addFilter(SWT.KeyDown, listenerF12);		
 		display.addFilter(SWT.KeyDown, listenerF09);
+		display.addFilter(SWT.KeyDown, listenerF04);
 	}
 	
 	private void createDelivery() {
 		Delivery delivery = saveDelivery();
+		logger.info("Orden de entrega generada: " + delivery.getId());
+		MessagesUtil.showInformation("Guardar orden de entrega", "<size=+6>Se ha guardado exitosamente la orden de entrega (número " + delivery.getId() + ").</size>");
+		resetFields();
+		txtInvoiceNo.setFocus();
+	}
+	
+	private void createPartialDelivery() {
+		Delivery delivery = savePartialDelivery();
 		logger.info("Orden de entrega generada: " + delivery.getId());
 		MessagesUtil.showInformation("Guardar orden de entrega", "<size=+6>Se ha guardado exitosamente la orden de entrega (número " + delivery.getId() + ").</size>");
 		resetFields();
@@ -400,8 +434,25 @@ public class CreateDeliveryEditor extends Composite {
 		btnGuardar.setEnabled(saveFlag);
 	}
 	
-	
+	/**
+	 * Save and close a delivery.
+	 * @return
+	 */
 	private Delivery saveDelivery() {
+		Delivery delivery = InvoiceDeliveryMapper.from(invoice);
+		delivery.setUserName(LoggedUserService.INSTANCE.getUser().getUserName());
+		delivery.close();
+		logger.info("Líneas de la entrega: " + delivery.getDeliveryLines().size());
+		DeliveryDAO dao = new DeliveryDAO();
+		dao.doSave(delivery);
+		return delivery;
+	}
+	
+	/**
+	 * Saves a partial delivery.
+	 * @return
+	 */
+	private Delivery savePartialDelivery() {
 		Delivery delivery = InvoiceDeliveryMapper.from(invoice);
 		delivery.setUserName(LoggedUserService.INSTANCE.getUser().getUserName());
 		logger.info("Líneas de la entrega: " + delivery.getDeliveryLines().size());
