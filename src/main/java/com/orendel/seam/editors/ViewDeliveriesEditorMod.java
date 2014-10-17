@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import com.orendel.seam.controllers.DeliveriesController;
 import com.orendel.seam.dialogs.DeliveryDetailDialog;
+import com.orendel.seam.domain.Status;
 import com.orendel.seam.domain.delivery.Delivery;
 import com.orendel.seam.services.DateUtil;
 import com.orendel.seam.util.MessagesUtil;
@@ -125,9 +126,17 @@ public class ViewDeliveriesEditorMod extends Composite {
 		tblclmnUsuario.setWidth(200);
 		tblclmnUsuario.setText("Usuario");
 		
-		TableColumn tblclmnFecha = new TableColumn(table, SWT.NONE);
-		tblclmnFecha.setWidth(175);
-		tblclmnFecha.setText("Fecha");
+		TableColumn tblclmnStatus = new TableColumn(table, SWT.CENTER);
+		tblclmnStatus.setWidth(80);
+		tblclmnStatus.setText("Status");
+		
+		TableColumn tblclmnCreated = new TableColumn(table, SWT.NONE);
+		tblclmnCreated.setWidth(175);
+		tblclmnCreated.setText("Fecha creación");
+		
+		TableColumn tblclmnClosed = new TableColumn(table, SWT.NONE);
+		tblclmnClosed.setWidth(175);
+		tblclmnClosed.setText("Fecha de cierre");
 		
 		addDoubleClickListener(table);
 	}
@@ -190,7 +199,9 @@ public class ViewDeliveriesEditorMod extends Composite {
 			item.setText(column++, Integer.toString(v.getDeliveryLines().size()));
 			item.setText(column++, Integer.toString(v.getDeliveredItemsTotalQty()));
 			item.setText(column++, v.getUserName() == null ? "" : v.getUserName());
+			item.setText(column++, v.getStatus() == null ? "?" : Status.fromCode(v.getStatus()).getDescription());
 			item.setText(column++, DateUtil.toString(v.getCreated(), DateUtil.formatoFechaHora));
+			item.setText(column++, DateUtil.toString(v.getClosed(), DateUtil.formatoFechaHora));
 			
 		}
 	}
