@@ -30,6 +30,7 @@ import com.orendel.seam.dialogs.UserDialog;
 import com.orendel.seam.domain.delivery.User;
 import com.orendel.seam.editors.CreateDeliveryEditor;
 import com.orendel.seam.editors.ViewDeliveriesEditorMod;
+import com.orendel.seam.editors.ViewPartialDeliveriesEditor;
 import com.orendel.seam.editors.ViewUsersEditor;
 import com.orendel.seam.services.HibernateUtil;
 import com.orendel.seam.services.HibernateUtilDelivery;
@@ -171,6 +172,9 @@ public class MainWindow {
 		MenuItem mntmConsultarEntregas = new MenuItem(menu_2, SWT.NONE);
 		mntmConsultarEntregas.setText("Consultar entregas");
 		
+		MenuItem mntmConsultarEntregasParciales = new MenuItem(menu_2, SWT.NONE);
+		mntmConsultarEntregasParciales.setText("Consultar entregas parciales");
+		
 		MenuItem mntmReporte01 = null;
 		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
 
@@ -252,9 +256,17 @@ public class MainWindow {
 		mntmConsultarEntregas.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("JA!");
 				disposeChildrenComposites(composite);
 				openViewDeliveriesEditor(composite);
+				composite.layout();
+			}
+		});
+		
+		mntmConsultarEntregasParciales.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				disposeChildrenComposites(composite);
+				openViewPartialDeliveriesEditor(composite);
 				composite.layout();
 			}
 		});
@@ -322,6 +334,13 @@ public class MainWindow {
 	
 	private ViewDeliveriesEditorMod openViewDeliveriesEditor(Composite composite) {
 		ViewDeliveriesEditorMod editor = new ViewDeliveriesEditorMod(composite, SWT.NONE);
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		return editor;
+	}
+	
+	
+	private ViewPartialDeliveriesEditor openViewPartialDeliveriesEditor(Composite composite) {
+		ViewPartialDeliveriesEditor editor = new ViewPartialDeliveriesEditor(composite, SWT.NONE);
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		return editor;
 	}

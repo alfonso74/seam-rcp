@@ -19,7 +19,7 @@ public final class InvoiceDeliveryMapper {
 		delivery.setInvoiceId(invoice.getId());
 		delivery.setTicketNumber(invoice.getTicket());
 		delivery.setCreated(new Date());
-		delivery.setStatus(Status.PENDING.getCode());
+		delivery.setStatus(Status.PARTIAL.getCode());
 		for (InvoiceLine invoiceLine : invoice.getLines()) {
 			DeliveryLine line = from(invoiceLine);
 			delivery.addDeliveryLine(line);
