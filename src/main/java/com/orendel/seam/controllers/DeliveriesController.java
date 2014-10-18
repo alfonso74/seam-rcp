@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.orendel.seam.dao.DeliveryDAO;
+import com.orendel.seam.domain.Status;
 import com.orendel.seam.domain.delivery.Delivery;
 
 public class DeliveriesController extends AbstractControllerDelivery<Delivery> {
@@ -81,6 +82,16 @@ public class DeliveriesController extends AbstractControllerDelivery<Delivery> {
 		if (initialDate != null && endDate != null) {
 			DeliveryDAO dao = new DeliveryDAO();
 			deliveryList = dao.findByDateRange(initialDate, endDate);
+		}
+		return deliveryList;
+	}
+	
+	
+	public List<Delivery> findPartialDeliveriesByDateRange(Date initialDate, Date endDate) {
+		List<Delivery> deliveryList = null;
+		if (initialDate != null && endDate != null) {
+			DeliveryDAO dao = new DeliveryDAO();
+			deliveryList = dao.findByDateRangeAndStatus(initialDate, endDate, Status.PARTIAL);
 		}
 		return deliveryList;
 	}

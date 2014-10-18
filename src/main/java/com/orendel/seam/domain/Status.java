@@ -8,7 +8,7 @@ public enum Status {
 	/** Inactive user */
 	INACTIVE("I", "Inactivo"),
 	/** Partial/Pending delivery */
-	PENDING("P", "Pending"),
+	PARTIAL("P", "Parcial"),
 	;
 
 	private String code;
