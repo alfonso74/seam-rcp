@@ -75,7 +75,7 @@ public class DeliveryDetailComposite extends Composite {
 		Label lblEntregado = new Label(groupDelivery, SWT.NONE);
 		lblEntregado.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblEntregado.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		lblEntregado.setText("Entregada:");
+		lblEntregado.setText("Creada:");
 		
 		txtDeliveryDate = new Text(groupDelivery, SWT.READ_ONLY);
 		GridData gd_txtDeliveryDate = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);

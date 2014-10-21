@@ -201,13 +201,12 @@ public class ViewDeliveriesEditorMod extends Composite {
 			item.setText(column++, v.getUserName() == null ? "" : v.getUserName());
 			item.setText(column++, v.getStatus() == null ? "?" : Status.fromCode(v.getStatus()).getDescription());
 			item.setText(column++, DateUtil.toString(v.getCreated(), DateUtil.formatoFechaHora));
-			item.setText(column++, DateUtil.toString(v.getClosed(), DateUtil.formatoFechaHora));
-			
+			item.setText(column++, DateUtil.toString(v.getClosed(), DateUtil.formatoFechaHora));			
 		}
 	}
 	
 	
-	private void toggleGroup() {
+	private void toggleCompositeSearchParametersGroup() {
 		for (Control c : compositeParams.getChildren()) {
 			c.dispose();
 		}
@@ -240,7 +239,7 @@ public class ViewDeliveriesEditorMod extends Composite {
 		comboBuscar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				toggleGroup();
+				toggleCompositeSearchParametersGroup();
 			}
 		});
 		new Label(composite, SWT.NONE);

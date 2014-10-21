@@ -112,23 +112,19 @@ public class ViewPartialDeliveriesEditor extends Composite {
 		TableColumn tblclmnCreated = new TableColumn(table, SWT.NONE);
 		tblclmnCreated.setWidth(175);
 		tblclmnCreated.setText("Fecha creación");
-		
-		TableColumn tblclmnClosed = new TableColumn(table, SWT.NONE);
-		tblclmnClosed.setWidth(175);
-		tblclmnClosed.setText("Fecha de cierre");
-		
+
 		addDoubleClickListener(table);
 	}
 	
 	
 	private void executeSearchByDateRange(Date initialDate, Date endDate) {
-		List<Delivery> deliveryList = controller.findDeliveryByDateRange(initialDate, endDate);
+		List<Delivery> deliveryList = controller.findPartialDeliveriesByDateRange(initialDate, endDate);
 		if (deliveryList != null && !deliveryList.isEmpty()) {
 			refreshTableDetails(deliveryList);
 		} else {
 			table.removeAll();
-			MessagesUtil.showWarning("Buscar entrega", 
-					"No se encontró ninguna entrega en el rango de fechas indicado.");
+			MessagesUtil.showWarning("Buscar entrega parcial", 
+					"No se encontró ninguna entrega parcial en el rango de fechas indicado.");
 		}
 	}
 	
@@ -147,9 +143,7 @@ public class ViewPartialDeliveriesEditor extends Composite {
 			item.setText(column++, Integer.toString(v.getDeliveredItemsTotalQty()));
 			item.setText(column++, v.getUserName() == null ? "" : v.getUserName());
 			item.setText(column++, v.getStatus() == null ? "?" : Status.fromCode(v.getStatus()).getDescription());
-			item.setText(column++, DateUtil.toString(v.getCreated(), DateUtil.formatoFechaHora));
-			item.setText(column++, DateUtil.toString(v.getClosed(), DateUtil.formatoFechaHora));
-			
+			item.setText(column++, DateUtil.toString(v.getCreated(), DateUtil.formatoFechaHora));			
 		}
 	}
 	
