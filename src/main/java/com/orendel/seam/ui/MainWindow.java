@@ -169,6 +169,8 @@ public class MainWindow {
 		MenuItem mntmRealizarEntrega = new MenuItem(menu_2, SWT.NONE);
 		mntmRealizarEntrega.setText("Realizar entrega");
 		
+		new MenuItem(menu_2, SWT.SEPARATOR);
+		
 		MenuItem mntmConsultarEntregas = new MenuItem(menu_2, SWT.NONE);
 		mntmConsultarEntregas.setText("Consultar entregas");
 		
