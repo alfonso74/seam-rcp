@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import com.orendel.seam.composites.BirtReport;
 import com.orendel.seam.config.AppConfig;
-import com.orendel.seam.config.IConfiguration;
 import com.orendel.seam.dialogs.Report01Parameters;
 import com.orendel.seam.dialogs.UpdatePasswordDialog;
 import com.orendel.seam.dialogs.UserDialog;
