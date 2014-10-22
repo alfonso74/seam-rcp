@@ -14,6 +14,21 @@ public class MessagesUtil {
 	}
 	
 	
+	public static int showConfirmation(String title, String message) {
+		final Dialog dialog = new Dialog(Display.getCurrent().getActiveShell());
+		dialog.setCenterPolicy(CenterOption.CENTER_ON_DIALOG);
+		dialog.setTitle("Confirmación");
+		dialog.setMinimumWidth(400);
+		dialog.getMessageArea()
+			.setTitle(title)
+			.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_QUESTION))
+			.setText(message);
+		dialog.setButtonType(OpalDialogType.OK_CANCEL);
+		return dialog.show();
+//		Dialog.isConfirmed(title, message, 10);
+	}
+	
+	
 	public static void showWarning(String title, String message) {
 		final Dialog dialog = new Dialog(Display.getCurrent().getActiveShell());
 		dialog.setCenterPolicy(CenterOption.CENTER_ON_DIALOG);

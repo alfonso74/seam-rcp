@@ -28,6 +28,7 @@ import com.orendel.seam.controllers.DeliveriesController;
 import com.orendel.seam.controllers.InvoicesController;
 import com.orendel.seam.dao.DeliveryDAO;
 import com.orendel.seam.domain.InvoiceDeliveryMapper;
+import com.orendel.seam.domain.Status;
 import com.orendel.seam.domain.counterpoint.Invoice;
 import com.orendel.seam.domain.counterpoint.InvoiceLine;
 import com.orendel.seam.domain.counterpoint.Item;
@@ -331,7 +332,17 @@ public class CreateDeliveryEditor extends Composite {
 					refreshInvoiceDetails();
 					result = true;
 				} else {
-					MessagesUtil.showError("Buscar factura", "La factura número " + txtInvoiceNo.getText() + " ya tiene una entrega realizada.");
+					if (delivery.getStatus().equals(Status.CLOSED.getCode())) {
+						MessagesUtil.showError("Buscar factura", "La factura número " + txtInvoiceNo.getText() + " ya tiene una entrega realizada.");
+					} else {
+						int action = MessagesUtil.showConfirmation("Buscar factura", "<size=+2>La factura número " + txtInvoiceNo.getText() + " ya tiene una entrega"
+								+ "parcial, desea completarla?</size>");
+						logger.info("Botón presionado: " + action);
+						if (action == 0) {
+							logger.info("Abrir entrega parcial");
+							// editar delivery en current editor
+						}
+					}					
 				}
 			} else {
 				tableInvoiceLines.removeAll();
