@@ -46,6 +46,11 @@ public class DeliveryLine {
 
 	// ****************************** Helper methods ********************************
 	
+	public void adjustDeliveredQuantity(int quantity) {
+		int currentQty = this.getQtyDelivered().intValue();
+		int newQty = currentQty + quantity;
+		this.setQtyDelivered(new BigDecimal(newQty));
+	}
 	
 	
 	// ***************************** Getters and setters ********************************

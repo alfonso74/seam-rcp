@@ -65,8 +65,8 @@ public class ViewDeliveriesEditorMod extends Composite {
 
 		shell = parent.getShell();
 		controller = new DeliveriesController();
-		logger.info("BBBB: " + controller.getListado().size());
-		logger.info("BBBB: " + controller.findAllDeliveries().size());
+//		logger.info("BBBB: " + controller.getListado().size());
+//		logger.info("BBBB: " + controller.findAllDeliveries().size());
 		
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
@@ -197,7 +197,7 @@ public class ViewDeliveriesEditorMod extends Composite {
 			item.setText(column++, " " + v.getTicketNumber());
 			item.setText(column++, v.getId().toString());
 			item.setText(column++, Integer.toString(v.getDeliveryLines().size()));
-			item.setText(column++, Integer.toString(v.getDeliveredItemsTotalQty()));
+			item.setText(column++, v.getDeliveredItemsIndicator());
 			item.setText(column++, v.getUserName() == null ? "" : v.getUserName());
 			item.setText(column++, v.getStatus() == null ? "?" : Status.fromCode(v.getStatus()).getDescription());
 			item.setText(column++, DateUtil.toString(v.getCreated(), DateUtil.formatoFechaHora));

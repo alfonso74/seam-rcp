@@ -140,7 +140,7 @@ public class ViewPartialDeliveriesEditor extends Composite {
 			item.setText(column++, " " + v.getTicketNumber());
 			item.setText(column++, v.getId().toString());
 			item.setText(column++, Integer.toString(v.getDeliveryLines().size()));
-			item.setText(column++, Integer.toString(v.getDeliveredItemsTotalQty()));
+			item.setText(column++, v.getDeliveredItemsIndicator());
 			item.setText(column++, v.getUserName() == null ? "" : v.getUserName());
 			item.setText(column++, v.getStatus() == null ? "?" : Status.fromCode(v.getStatus()).getDescription());
 			item.setText(column++, DateUtil.toString(v.getCreated(), DateUtil.formatoFechaHora));			

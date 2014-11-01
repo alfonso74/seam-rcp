@@ -1,7 +1,5 @@
 package com.orendel.seam.editors;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,9 +28,9 @@ import com.orendel.seam.dao.DeliveryDAO;
 import com.orendel.seam.domain.InvoiceDeliveryMapper;
 import com.orendel.seam.domain.Status;
 import com.orendel.seam.domain.counterpoint.Invoice;
-import com.orendel.seam.domain.counterpoint.InvoiceLine;
 import com.orendel.seam.domain.counterpoint.Item;
 import com.orendel.seam.domain.delivery.Delivery;
+import com.orendel.seam.domain.delivery.DeliveryLine;
 import com.orendel.seam.ui.login.LoggedUserService;
 import com.orendel.seam.util.MessagesUtil;
 
@@ -42,7 +40,8 @@ public class CreateDeliveryEditor extends Composite {
 	
 	private InvoicesController controller;
 	private DeliveriesController deliveriesController;
-	private Invoice invoice;
+//	private Invoice invoice;
+	private Delivery delivery;
 	
 	private boolean saveFlag = false;
 	
@@ -169,9 +168,7 @@ public class CreateDeliveryEditor extends Composite {
 				if (arg0.keyCode == 13) {
 					if (!txtBarcode.getText().isEmpty()) {
 						accountForItemWithBarCodeOrItemCode(txtBarcode.getText());
-						if (invoice != null) {
-							refreshInvoiceDetails();
-						}
+						refreshFormDetails();
 						txtBarcode.setText("");
 						txtQty.setFocus();
 						txtQty.setText("1");
@@ -222,7 +219,7 @@ public class CreateDeliveryEditor extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				System.out.println("Partial delivery button pressed!");
-				createPartialDelivery();;
+				createPartialDelivery();
 			}
 		});
 		
@@ -270,12 +267,6 @@ public class CreateDeliveryEditor extends Composite {
 						createDelivery();
 					}
 				}
-//				if (event.stateMask == SWT.CTRL && (event.keyCode == 'S' || event.keyCode == 's')) {
-//					System.out.println("CTRL + S pressed!");
-//					if (btnGuardar.getEnabled()) {
-//						createDelivery();
-//					}
-//				}
 			}
 		};
 		
@@ -294,14 +285,14 @@ public class CreateDeliveryEditor extends Composite {
 			public void handleEvent(Event event) {
 				if (event.keyCode == SWT.F4) {
 					System.out.println("F4 (partial delivery form) pressed!");
-					resetDeliveryData();
+					createPartialDelivery();
 				}
 			}
 		};
 		
-		display.addFilter(SWT.KeyDown, listenerF12);		
-		display.addFilter(SWT.KeyDown, listenerF09);
 		display.addFilter(SWT.KeyDown, listenerF04);
+		display.addFilter(SWT.KeyDown, listenerF12);		
+		display.addFilter(SWT.KeyDown, listenerF09);		
 	}
 	
 	private void createDelivery() {
@@ -314,8 +305,8 @@ public class CreateDeliveryEditor extends Composite {
 	
 	private void createPartialDelivery() {
 		Delivery delivery = savePartialDelivery();
-		logger.info("Orden de entrega generada: " + delivery.getId());
-		MessagesUtil.showInformation("Guardar orden de entrega", "<size=+6>Se ha guardado exitosamente la orden de entrega (número " + delivery.getId() + ").</size>");
+		logger.info("Orden de entrega PARCIAL generada: " + delivery.getId());
+		MessagesUtil.showInformation("Guardar orden de entrega parcial", "<size=+6>Se ha guardado exitosamente la entrega parcial (número " + delivery.getId() + ").</size>");
 		resetFields();
 		txtInvoiceNo.setFocus();
 	}
@@ -324,12 +315,13 @@ public class CreateDeliveryEditor extends Composite {
 	private boolean buscarDetallesFactura() {
 		boolean result = false;
 		if (!txtInvoiceNo.getText().isEmpty()) {
-			invoice = controller.findInvoiceByNumber(txtInvoiceNo.getText());
+			Invoice invoice = controller.findInvoiceByNumber(txtInvoiceNo.getText());
 			if (invoice != null) {
-				Delivery delivery = deliveriesController.findDeliveryByInvoiceNumber(txtInvoiceNo.getText());
+				delivery = deliveriesController.findDeliveryByInvoiceNumber(txtInvoiceNo.getText());
 				if (delivery == null) {
 					logger.info("Factura encontrada!, documento: " + invoice.getTicket() + ", líneas: " + invoice.getLines());
-					refreshInvoiceDetails();
+					delivery = InvoiceDeliveryMapper.from(invoice);
+					refreshFormDetails();
 					result = true;
 				} else {
 					if (delivery.getStatus().equals(Status.CLOSED.getCode())) {
@@ -341,6 +333,8 @@ public class CreateDeliveryEditor extends Composite {
 						if (action == 0) {
 							logger.info("Abrir entrega parcial");
 							// editar delivery en current editor
+							refreshFormDetails();
+							result = true;
 						}
 					}					
 				}
@@ -360,50 +354,31 @@ public class CreateDeliveryEditor extends Composite {
 		}
 		if (item != null) {
 			logger.info("Artículo encontrado en DB: " + item.getDescription());
-//			InvoiceLine line = locateInvoiceLineWithIem(item);
-			InvoiceLine line = controller.locateInvoiceLineForItemDelivery(invoice, item);
-			if (line != null) {
-				int qty = Integer.parseInt(txtQty.getText());
-				line.adjustQuantity(qty);  //TODO retornar qty aplicada o restante por aplicar (considerar negativos)
-			} else {
+			
+//			InvoiceLine line = controller.locateInvoiceLineForItemDelivery(null, item);
+//			if (line != null) {
+//				int qty = Integer.parseInt(txtQty.getText());
+//				line.adjustQuantity(qty);  //TODO retornar qty aplicada o restante por aplicar (considerar negativos)
+//			} else {
+//				logger.info("Artículo NO encontrado en factura: " + item.getDescription());
+//				MessagesUtil.showWarning("Búsqueda por código", "No se encontró ninguna línea con el código suministrado: " + barcode + ".");
+//			}
+			
+			int qty = Integer.parseInt(txtQty.getText());
+			DeliveryLine line = delivery.adjustDeliveredQuantityForItem(item.getItemNo(), qty);
+			if (line == null) {
 				logger.info("Artículo NO encontrado en factura: " + item.getDescription());
 				MessagesUtil.showWarning("Búsqueda por código", "No se encontró ninguna línea con el código suministrado: " + barcode + ".");
-			}
+			}			
+			
 		} else {
 			MessagesUtil.showError("Búsqueda por código", "No se encontró ningún artículo con el código de barra suministrado: " + barcode + ".");
 		}
 	}
 	
-	// movido a clase InvoicesController
-	@Deprecated
-	private InvoiceLine locateInvoiceLineWithIem(Item item) {
-		InvoiceLine invoiceLine = null;
-		List<InvoiceLine> invoiceLines = invoice.locateLinesWithItem(item);
-		
-		// buscamos si hay alguna línea con entregas pendientes
-		for (InvoiceLine line : invoiceLines) {
-			if (line.getQtySold().longValue() > line.getQtyDelivered().longValue()) {
-				invoiceLine = line;
-			}
-		}
-		
-		// si no hay ninguna línea con entregas pendientes...
-		if (invoiceLine == null) {
-			// ...se selecciona la primera que aparezca en la factura
-			if (!invoiceLines.isEmpty()) {
-				invoiceLine = invoiceLines.get(0);
-			}
-		}
-		
-		if (invoiceLine != null) {
-			logger.debug("Línea con artículo: " + invoiceLine.getDescripcion() + ", item desc: " + item.getDescription() + ", barcodes: " + item.getBarcodeList());
-		}
-		return invoiceLine;
-	}
 	
-	
-	private void refreshInvoiceDetails() {
-		if (invoice == null) {
+	private void refreshFormDetails() {
+		if (delivery == null) {
 			logger.warn("Invoice object is null!");
 			return;
 		}
@@ -412,30 +387,31 @@ public class CreateDeliveryEditor extends Composite {
 		TableItem item;
 		
 		saveFlag = true;
-		for (InvoiceLine v : invoice.getLines()) {
+		for (DeliveryLine v : delivery.getDeliveryLines()) {
 			Color deliveryOK = new Color(getDisplay(), 200, 255, 190);
 			
 			item = new TableItem(tableInvoiceLines, SWT.NONE);
 			int column = 0;
-			item.setText(column++, " " + v.getQtySold().toString());
-			item.setText(column++, v.getQtyDelivered().toString());
-			item.setText(column++, v.getItem().getItemNo());
-			item.setText(column++, v.getDescripcion());
-			if (v.getQtySold().equals(v.getQtyDelivered())) {
+			item.setText(column++, " " + v.getQtySold().setScale(0).toString());
+			item.setText(column++, v.getQtyDelivered().setScale(0).toString());
+			item.setText(column++, v.getItemNumber());
+			item.setText(column++, v.getItemDescription());
+			logger.info("SOLD: " + v.getQtySold() + ", DELIVERED: " + v.getQtyDelivered());
+			if (v.getQtySold().intValue() == v.getQtyDelivered().intValue()) {
 				// marcar verde
-				Color color = new Color(getDisplay(), 200, 255, 190);
-				item.setBackground(color);
-			} else if (v.getQtyDelivered().equals(0)) {
+				Color green = new Color(getDisplay(), 200, 255, 190);
+				item.setBackground(green);
+			} else if (v.getQtyDelivered().intValue() == 0) {
 				// sin color
 				item.setBackground(null);
 			} else if (v.getQtyDelivered().intValue() > v.getQtySold().intValue()) {
 				// marcar rojo
-				Color color = new Color(getDisplay(), 255, 60, 60);
-				item.setBackground(color);
+				Color red = new Color(getDisplay(), 255, 60, 60);
+				item.setBackground(red);
 			} else if (v.getQtyDelivered().intValue() > 0) {
 				// marcar amarillo
-				Color color = new Color(getDisplay(), 255, 255, 190);
-				item.setBackground(color);
+				Color yellow = new Color(getDisplay(), 255, 255, 190);
+				item.setBackground(yellow);
 			}
 //			item.setBackground(1, blue);
 			if (!item.getBackground().equals(deliveryOK)) {
@@ -450,7 +426,6 @@ public class CreateDeliveryEditor extends Composite {
 	 * @return
 	 */
 	private Delivery saveDelivery() {
-		Delivery delivery = InvoiceDeliveryMapper.from(invoice);
 		delivery.setUserName(LoggedUserService.INSTANCE.getUser().getUserName());
 		delivery.close();
 		logger.info("Líneas de la entrega: " + delivery.getDeliveryLines().size());
@@ -464,7 +439,6 @@ public class CreateDeliveryEditor extends Composite {
 	 * @return
 	 */
 	private Delivery savePartialDelivery() {
-		Delivery delivery = InvoiceDeliveryMapper.from(invoice);
 		delivery.setUserName(LoggedUserService.INSTANCE.getUser().getUserName());
 		logger.info("Líneas de la entrega: " + delivery.getDeliveryLines().size());
 		DeliveryDAO dao = new DeliveryDAO();
@@ -481,7 +455,7 @@ public class CreateDeliveryEditor extends Composite {
 		txtBarcode.setText("");
 		txtQty.setSelection(1);
 		tableInvoiceLines.clearAll();
-		invoice = null;
+		delivery = null;
 		btnGuardar.setEnabled(false);
 	}
 	
@@ -495,7 +469,7 @@ public class CreateDeliveryEditor extends Composite {
 		controller = new InvoicesController("InvoicesCtrl");
 		deliveriesController = new DeliveriesController("DeliveryCtrl");
 		tableInvoiceLines.clearAll();
-		invoice = null;
+		delivery = null;
 		btnGuardar.setEnabled(false);
 		if (buscarDetallesFactura()) {
 			txtQty.setFocus();
@@ -515,6 +489,7 @@ public class CreateDeliveryEditor extends Composite {
 
 	@Override
 	public void dispose() {
+		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF04);
 		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF09);
 		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF12);
 		controller.finalizarSesion();
@@ -522,3 +497,4 @@ public class CreateDeliveryEditor extends Composite {
 		super.dispose();		
 	}
 }
+
